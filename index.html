@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bekal Go - Layanan Pre-Order H-1 & Pick-Up Drop & Go Bekal Sekolah</title>
+  <meta name="description" content="Platform agregator pemesanan bekal pagi H-1 untuk orang tua siswa Sidoarjo dengan sistem Drop & Go (Drive-Thru Darurat) bermitra dengan UMKM sarapan.">
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+
+  <!-- CSS Design System & Role Views -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/customer.css">
+  <link rel="stylesheet" href="css/merchant.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Simulation Status Bar (System Clock & Cut-off Live Testing) -->
+  <aside class="sim-ribbon" aria-label="Simulasi Waktu Sistem">
+    <div class="sim-ribbon-content">
+      <span style="font-weight: 700; color: #94A3B8;">⏰ WAKTU SISTEM BEKAL GO:</span>
+      <div id="sim-cutoff-badge" class="sim-badge active-open">
+        <span class="pulse-dot"></span> 19:45 WIB (SEBELUM CUT-OFF - PRE-ORDER H-1 TERBUKA)
+      </div>
+    </div>
+    <div class="sim-controls">
+      <span style="color: #94A3B8; font-size: 0.75rem;">Uji Alur Cut-Off 21.00:</span>
+      <button class="btn-sim" onclick="window.app.quickToggleCutoff()">
+        ⚡ Toggle Simulasi Sebelum / Sesudah 21.00
+      </button>
+    </div>
+  </aside>
+
+  <!-- Navigation Bar with Unified Role Switcher -->
+  <header class="navbar">
+    <div class="nav-container">
+      
+      <!-- Brand Logo & Identity -->
+      <div class="brand" onclick="window.app.switchRole('customer')">
+        <img src="assets/logo.jpg" alt="Bekal Go Logo" class="brand-logo">
+        <div class="brand-text">
+          <h1>
+            Bekal Go
+            <span class="brand-badge">Drop &amp; Go</span>
+          </h1>
+          <p>Pre-Order Pagi H-1 &bull; Bebas Antre &amp; Macet</p>
+        </div>
+      </div>
+
+      <!-- User's Explicit Directive: Dedicated Role Switcher -->
+      <nav class="role-nav-switch" aria-label="Pilih Tampilan Role">
+        <button class="role-tab-btn active role-customer" data-role="customer" onclick="window.app.switchRole('customer')">
+          <span>👨‍👩‍👧</span>
+          <span>Pelanggan (Orang Tua)</span>
+        </button>
+        <button class="role-tab-btn role-merchant" data-role="merchant" onclick="window.app.switchRole('merchant')">
+          <span>🍳</span>
+          <span>Mitra Tenant (UMKM)</span>
+        </button>
+        <button class="role-tab-btn role-admin" data-role="admin" onclick="window.app.switchRole('admin')">
+          <span>🛡️</span>
+          <span>Platform Admin</span>
+        </button>
+      </nav>
+
+      <!-- User Profile & BekalWallet Chip -->
+      <div class="user-quick-profile">
+        <div id="header-wallet-chip" class="wallet-chip" onclick="window.customerCtrl.openTopupModal()">
+          <span>💳 BekalWallet: <strong>Rp135.000</strong></span>
+          <span class="topup-plus">+</span>
+        </div>
+        <div id="header-role-indicator" class="role-indicator-badge">
+          👨‍👩‍👧 <span>Ibu Sari</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main View Area (Separated Post-Login Displays) -->
+  <main class="app-container">
+    
+    <!-- 1. Customer View (Orang Tua Siswa) -->
+    <section id="customer-view" class="role-view active" aria-label="Portal Pelanggan Orang Tua">
+      <!-- Dynamically rendered by js/customer.js -->
+    </section>
+
+    <!-- 2. Merchant View (Mitra Tenant UMKM Sarapan) -->
+    <section id="merchant-view" class="role-view" aria-label="Dashboard Mitra Tenant">
+      <!-- Dynamically rendered by js/merchant.js -->
+    </section>
+
+    <!-- 3. Admin View (Platform Operator & Logistics) -->
+    <section id="admin-view" class="role-view" aria-label="Pusat Kendali Admin Platform">
+      <!-- Dynamically rendered by js/admin.js -->
+    </section>
+
+  </main>
+
+  <!-- Modal: Top Up BekalWallet (Mitigasi Biaya Payment Gateway - Blueprint 3.A & 5) -->
+  <div id="topup-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="topup-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="topup-title" class="modal-title">💳 Top Up Saldo BekalWallet</h3>
+        <button class="modal-close" onclick="window.customerCtrl.closeTopupModal()" aria-label="Tutup modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--primary-50); border: 1px solid var(--primary-100); padding: 14px; border-radius: var(--radius-md); margin-bottom: 16px; font-size: 0.85rem; color: #065F46;">
+          💡 <strong>Mitigasi Biaya Transaksi:</strong> Dengan sistem dompet internal, transaksi pre-order harian bebas potongan MDR per menu, menjamin harga sarapan tetap murah untuk siswa.
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">Pilih Nominal Top Up:</label>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('topup-amount-input').value = 50000;">
+              Rp50.000
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('topup-amount-input').value = 100000;">
+              Rp100.000
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('topup-amount-input').value = 200000;">
+              Rp200.000
+            </button>
+          </div>
+          <input type="number" id="topup-amount-input" class="custom-select" style="width: 100%; font-size: 1.1rem; font-weight: 700;" value="50000" min="20000" step="10000">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">Metode Pembayaran Instan:</label>
+          <select id="topup-method-select" class="custom-select" style="width: 100%;">
+            <option value="QRIS (BCA / Mandiri / GoPay)">QRIS Nasional (BCA / Mandiri / GoPay / OVO)</option>
+            <option value="BCA Virtual Account">BCA Virtual Account (Otomatis Verifikasi)</option>
+            <option value="Mandiri Livin Virtual Account">Mandiri Livin Virtual Account</option>
+            <option value="BRI Virtual Account (BRIVA)">BRI Virtual Account (BRIVA)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="window.customerCtrl.closeTopupModal()">Batal</button>
+        <button class="btn btn-primary" onclick="window.customerCtrl.confirmTopup()">Bayar &amp; Tambah Saldo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: WhatsApp Notification Simulator (Blueprint 4 & 6) -->
+  <div id="wa-sim-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="wa-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="wa-modal-title" class="modal-title">💬 Simulasi WhatsApp Gateway (Fonnte/Twilio)</h3>
+        <button class="modal-close" onclick="document.getElementById('wa-sim-modal').classList.remove('active')" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" id="wa-sim-content">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="document.getElementById('wa-sim-modal').classList.remove('active')">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Recurring Subscription (Blueprint 3.A) -->
+  <div id="recurring-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="recurring-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="recurring-title" class="modal-title">🔁 Paket Langganan Sarapan Mingguan</h3>
+        <button class="modal-close" onclick="window.customerCtrl.closeRecurringModal()" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="background: #FFFBEB; border: 1px solid #FDE68A; padding: 14px; border-radius: var(--radius-md);">
+            <div style="font-weight: 800; color: #92400E; font-size: 1.05rem;">🍱 Paket Hemat 5 Hari (Senin - Jumat)</div>
+            <p style="font-size: 0.85rem; color: #B45309; margin-top: 4px;">
+              Menu bervariasi setiap pagi (Nasi Uduk, Roti Gandum &amp; Susu, Bento Dino, Bubur Ayam, &amp; Buah Segar). 
+              Anak tidak bosan, orang tua bebas dari kerepotan pre-order tiap malam!
+            </p>
+          </div>
+
+          <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span>Harga Normal (5 hari):</span>
+              <span style="text-decoration: line-through; color: var(--text-muted);">Rp105.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #047857;">
+              <span>Diskon Paket Langganan (10%):</span>
+              <span>-Rp10.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; border-top: 1px dashed var(--border); padding-top: 8px;">
+              <span>Total Paket Mingguan:</span>
+              <span style="color: var(--primary-dark);">Rp95.000</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.78rem; color: var(--text-muted);">
+            *Saldo BekalWallet otomatis dialokasikan setiap Minggu malam sebelum cut-off jam 21.00.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="window.customerCtrl.closeRecurringModal()">Nanti Saja</button>
+        <button class="btn btn-secondary" onclick="window.customerCtrl.confirmRecurring()">Aktifkan Paket Langganan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Merchant Settlement Payout (Blueprint 3.B & 5) -->
+  <div id="settlement-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settlement-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="settlement-title" class="modal-title">💰 Pencairan Saldo Mitra Tenant</h3>
+        <button class="modal-close" onclick="document.getElementById('settlement-modal').classList.remove('active')" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" id="settlement-modal-content">
+        <!-- Content filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="document.getElementById('settlement-modal').classList.remove('active')">Batal</button>
+        <button class="btn btn-primary" onclick="window.merchantCtrl.confirmSettlement()">Transfer Sekarang ke Rekening</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="libs/qrcode.min.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/customer.js"></script>
+  <script src="js/merchant.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
